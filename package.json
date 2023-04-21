@@ -1,0 +1,30 @@
+{
+  "name": "sports-scheduler",
+  "version": "1.0.0",
+  "description": "Sports scheduling web app",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Abbhishekk/sports-scheduler.git"
+  },
+  "author": "Jane Doe <jane.doe@example.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Abbhishekk/sports-scheduler/issues"
+  },
+  "homepage": "https://github.com/Abbhishekk/sports-scheduler#readme",
+  "dependencies": {
+    "husky": "^8.0.3",
+    "lint-staged": "^13.2.1",
+    "pg": "^8.10.0",
+    "sequelize": "^6.31.0",
+    "sequelize-cli": "^6.6.0"
+  },
+  "devDependencies": {
+    "ejs": "^3.1.9",
+    "express": "^4.18.2"
+  }
+}
