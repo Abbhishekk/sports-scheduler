@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="./css/styles.css" />
+  <title>Sports Scheduler</title>
+</head>
+
+
+<body>
+    <%- include('header.ejs') %>
+  <div class="grid grid-cols-6 p-6">
+    <div class="col-start-3 col-span-2 border-4 rounded-lg space-y-4 p-6 border-lime-950">
+      
+      <h3 class="text-2xl font-semibold text-gray-500	">Sign-up</h3>
+        <form action="/users" method="POST">
+          <div class=" gap-2 py-4">
+            <div class="font-auto py-2">
+                <label for="firstname">First Name: </label>
+              <input type="text" name="firstname" placeholder="First Name" class="border border-gray-300 rounded text-gray-900 w-full p-2 text-sm"  />
+            </div>
+            <div class="flex-auto py-2">
+                <label for="lastname">Last Name: </label>
+              <input type="text" name="lastname" placeholder="Last Name" class="border border-gray-300 rounded text-gray-900 w-full p-2 text-sm leading-4" />
+            </div>
+            <div class="pt-2 pb-2">
+                <label for="">Role:</label>
+                <div>
+                    <input type="radio" name="role" class="" id="admin">
+                    <label for="admin">Admin</label>
+                    <input type="radio" name="role" class="" id="player">
+                    <label for="player">Player</label>
+                </div>
+                
+                    
+                
+            </div>
+            <div class="flex-auto py-2">
+                <label for="email">Email: </label>
+                <input type="email" name="email" placeholder="Email" class="border border-gray-300 rounded text-gray-900 w-full p-2 text-sm leading-4"  />
+              </div>
+              <div class="flex-auto py-2">
+                <label for="password">Password: </label>
+                <input type="password" name="password" placeholder="Password" class="border border-gray-300 rounded text-gray-900 w-full p-2 text-sm leading-4" required />
+              </div>
+            <div class="flex pt-2">
+                <p>Already a user?</p><a href="/login" class="text-blue-600 underline">Login</a>
+            </div>  
+            <div class="flex-none py-2 space-y-4">
+              <button type="submit" class="bg-green-600 h-auto text-white px-5 py-2 rounded font-medium mr-2 mb">Sign-up</button>
+            </div>
+          </div>
+        </form>
+        
+        <div>
+         
+          
+        </div>
+    </div>
+  </div>
+  <%- include('footer.ejs') %>
+</body>
+</html>
