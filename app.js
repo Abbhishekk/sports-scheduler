@@ -16,5 +16,8 @@ app.get('/signup',(request, response) => {
     response.render('signup');
 });
 
+app.get('/admin',(request, response) => {
+    response.render('useradmin')
+})
 
 module.exports = app

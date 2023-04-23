@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Sports Scheduler</title>
+</head>
+<body>
+    <%- include('header')%>
+    <div class="container m-auto p-auto ">
+        <div class=" mx-auto pt-6 mt-3 text-6xl flex ">
+            <h1>Welcome Jhon Doe</h1>
+        </div>
+        <div class="pt-6 pb-4 flex gap-5">
+            <a href="#"><input type="button" class="bg-lime-950 text-white p-2 rounded-lg border-2 border-teal-400 hover:bg-white hover:text-black" name="sport" id="sport" value="Create Sport"></a>
+            <a href="#"><input type="button" class="bg-lime-950 text-white p-2 rounded-lg border-2 border-teal-400 hover:bg-white hover:text-black" name="report" id="report" value="view Report"></a>
+        </div>
+        <hr>
+        <div class="mt-6">
+            <div class="text-2xl">
+                <h3>Sports created by you!</h3>
+            </div>
+            
+            <div class="flex mt-5 mb-5 text-xl">
+                <ul class="list-none flex gap-10">
+                    <div class="">
+                        <a href="#">
+                            <li class="bg-lime-950 text-white p-2 w-full rounded-lg border-2 border-teal-400 hover:bg-white hover:text-black"> Sport1</li>
+                        </a>
+                    </div>    
+                </ul>
+            </div>
+        </div>
+        <hr>
+        <div class="text-xl">
+            <h1 class="text-2xl">Available sports</h1>
+            <ul class="list-none flex gap-10">
+                <div class="pt-6">
+                    <a href="#">
+                        <li class="bg-lime-950 text-white p-2 w-full rounded-lg border-2 border-teal-400 hover:bg-white hover:text-black"> Sport1</li>
+                    </a>
+                </div>    
+            </ul>
+        </div>
+    </div>
+    <%- include('footer')%>
+</body>
+</html>
