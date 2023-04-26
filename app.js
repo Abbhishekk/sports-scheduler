@@ -20,4 +20,8 @@ app.get('/admin',(request, response) => {
     response.render('useradmin')
 })
 
+app.get('/createsport', (request, response) => {
+    response.render('createsport')
+})
+
 module.exports = app

@@ -9,14 +9,14 @@
     <title>Sports Scheduler</title>
 </head>
 <body>
-    <%- include('header')%>
+    <%- include('header',{page: "name"})%>
     <div class="container m-auto p-auto ">
         <div class=" mx-auto pt-6 mt-3 text-6xl flex ">
             <h1>Welcome Jhon Doe</h1>
         </div>
         <div class="pt-6 pb-4 flex gap-5">
-            <a href="#"><input type="button" class="bg-lime-950 text-white p-2 rounded-lg border-2 border-teal-400 hover:bg-white hover:text-black" name="sport" id="sport" value="Create Sport"></a>
-            <a href="#"><input type="button" class="bg-lime-950 text-white p-2 rounded-lg border-2 border-teal-400 hover:bg-white hover:text-black" name="report" id="report" value="view Report"></a>
+            <a href="/createsport"><input type="button" class="bg-lime-950 text-white p-2 cursor-pointer rounded-lg border-2 border-teal-400 hover:bg-white hover:text-black" name="sport" id="sport" value="Create Sport"></a>
+            <a href="#"><input type="button" class="bg-lime-950 text-white p-2 cursor-pointer rounded-lg border-2 border-teal-400 hover:bg-white hover:text-black" name="report" id="report" value="view Report"></a>
         </div>
         <hr>
         <div class="mt-6">
