@@ -8,6 +8,9 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <title>Sports Scheduler</title>
 </head>
+<script>
+    
+</script>
 <body>
     <%- include('header',{page: "name"})%>
     <div class="container m-auto p-auto ">
@@ -38,11 +41,13 @@
         <div class="text-xl">
             <h1 class="text-2xl">Available sports</h1>
             <ul class="list-none flex gap-10">
+                <% for(var i=0 ; i<allSports.length; i++){ %>
                 <div class="pt-6">
-                    <a href="#">
-                        <li class="bg-lime-950 text-white p-2 w-full rounded-lg border-2 border-teal-400 hover:bg-white hover:text-black"> Sport1</li>
+                    <a href="/sportsession/<%= allSports[i].id %>/admin" >
+                        <li class="bg-lime-950 text-white p-2 w-full rounded-lg border-2 border-teal-400 hover:bg-white hover:text-black"><%= allSports[i].sport_name %></li>
                     </a>
-                </div>    
+                </div>
+                <% }%>    
             </ul>
         </div>
     </div>

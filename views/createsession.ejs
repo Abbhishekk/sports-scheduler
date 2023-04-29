@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Sport Scheduler</title>
+</head>
+<body>
+    <%- include('header',{page: 'name'})%>
+    <div>
+        
+        <form class="container mx-auto my-10">
+            <h2 class="text-6xl my-10">Create Session</h2>
+            <div>
+                <p class=" mb-0 text-2xl">Input Date and Time of session</p>
+                <input type="datetime-local" name="dateTime" id="date" class="border-2 mt-4 p-2 rounded w-60 border-lime-950">
+            </div>
+            <div>
+                <p class=" mb-0 text-2xl">Input Address of session to be held</p>
+                <textarea name="address" id="address" cols="50" rows="5" class="border-2 mt-4 p-2 rounded border-lime-950"></textarea>
+                
+            </div>
+            <div>
+                <p class=" mb-0 text-2xl">Enter Players Joining sessions(Comma-seperated)</p>
+                <input type="text" name="playername" id="playername" class="border-2 mt-4 p-2 rounded w-full border-lime-950">
+            </div>
+            <div>
+                <p class=" mb-0 text-2xl">Input No. of Players</p>
+                <input type="number" name="noPlayer" id="noPlayer" class="border-2 mt-4 p-2 rounded w-60 border-lime-950">
+            </div>
+            <div>
+                <input type="submit" name="submit" id="submit" class="bg-lime-950 text-white p-2 cursor-pointer rounded-lg border-2 border-lime-950 hover:bg-white hover:text-black mt-5">
+            </div>
+        </form>
+  
+    </div>
+    <%- include('footer')%>
+</body>
+</html>

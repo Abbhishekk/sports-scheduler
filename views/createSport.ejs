@@ -10,9 +10,9 @@
 <body>
     <%- include('header',{page: "name"})%>
     <p class="text-6xl text-center mt-10">Create new Sport</p>
-    <form action="/" class="text-center block mt-10 p-6 text-2xl block">
+    <form action="/createsport" method="POST" class="text-center block mt-10 p-6 text-2xl block">
         <p class="m-4 mb-0">Enter sport Name</p><br>
-        <input type="text" name="sportname" id="sportname" class="border-2 rounded w-3/6 border-lime-950" placeholder="eg. cricket,badminton,tennis">
+        <input type="text" name="sport" id="sportname" class="border-2 p-6 rounded w-3/6 border-lime-950" placeholder="eg. cricket,badminton,tennis">
         <br>
         <input type="submit" name="submit" id="submit" class="bg-lime-950 text-white p-2 cursor-pointer rounded-lg border-2 border-lime-950 hover:bg-white hover:text-black mt-5">
     </form>
