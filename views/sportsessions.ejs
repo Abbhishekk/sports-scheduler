@@ -37,12 +37,19 @@
         
         <br>
         <p class="text-2xl">Sessions</p>
-        <div class="w-56 mt-10 rounded-lg text-white px-10 py-4 bg-lime-950 h-16 cursor-pointer hover:bg-white hover:text-lime-950 border-2 border-lime-950">
-           <a href="#"> Jan 1,2023 5:30 PM </a>
-        </div>
+        <% for(var i=0; i<allSessions.length; i++) { %>
+        <a href="/session/<%= allSessions[i].id %>">
+            <div class="w-auto mt-10 rounded-lg flex text-white px-10 py-4 bg-lime-950 h-16 cursor-pointer overflow-hidden hover:bg-white hover:text-lime-950 border-2 border-lime-950">
+                <%= allSessions[i].time %>
+                <p class="text-right ml-10">
+                    <%= ( allSessions[i].noplayers - allSessions[i].playername.length )%> slots available
+                </p> 
+            </div>
+        </a>
+        <% } %>
     </div>
     <div class="container m-auto mt-10 p-auto text-xl gap-10" >
-        <a href="/createsession" >Create a new session</a>
+        <a href="/createsession/<%= sportID %>" >Create a new session</a>
         <a href="#" class="px-10">View previous sessions</a>
     </div>
     <%- include('footer')%>

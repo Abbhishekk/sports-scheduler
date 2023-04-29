@@ -21,6 +21,15 @@ module.exports = (sequelize, DataTypes) => {
     static getSports(){
       return this.findAll();
     }
+    static async findSportByName(sportname){
+      const getSport= await this.findAll({
+        where: {
+          sport_name: sportname
+        }
+      })
+      console.log(getSport.length)
+      return ((getSport.length == 0) ? true: false);
+    }
     static findSportById(id){
       return this.findByPk(id);
     }

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Sports Scheduler</title>
+</head>
+<body>
+    <%- include('header',{page: 'name'})%>
+    <div class="container mx-auto">
+        <h1 class=" text-6xl my-10 m-10"><%= allSessions.sportname %> Session #<%= allSessions.id %></h1>
+        <div class="my-10 text-2xl m-10">
+            <p>Date & Time: </p> <p><%= allSessions.time %></p>
+            <br>
+            <p>Address: </p> <p><%= allSessions.address%> </p>
+        </div>
+        <div class=" m-10">
+            <h1 class="text-6xl">Players</h1>
+            <div class="flex gap-10">
+                <% for(var i=0; i<allSessions.playername.length; i++) { %>
+                <a href="#" class="w-60 mt-10 rounded-lg flex text-white px-10 py-4 bg-lime-950 h-16 cursor-pointer overflow-auto hover:bg-white hover:text-lime-950 border-2 border-lime-950">
+                    <div >
+                        <%= allSessions.playername[i] %>
+                    </div>
+                </a>
+                <% } %>
+            </div>
+        </div>
+    </div>
+        
+    <%- include('footer')%>
+</body>
+</html>

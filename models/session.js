@@ -12,12 +12,34 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
     }
+
+    static addSession({sportname, dateTime, address, players, noplayers, sessioncreated}){
+      return this.create({
+        sportname: sportname,
+        time: dateTime,
+        address: address,
+        playername: players,
+        noplayers: noplayers,
+        sessioncreated: sessioncreated
+      })
+    }
+
+    static getSessions({sportname}){
+      return this.findAll({
+        where: {
+          sportname: sportname
+        }
+      })
+    }
+    static getSessionById(id){
+      return this.findByPk(id)
+    }
   }
   session.init({
     sportname: DataTypes.STRING,
     time: DataTypes.DATE,
     address: DataTypes.STRING,
-    playername: DataTypes.ARRAY,
+    playername: DataTypes.ARRAY(DataTypes.STRING),
     noplayers: DataTypes.INTEGER,
     sessioncreated: DataTypes.BOOLEAN
   }, {

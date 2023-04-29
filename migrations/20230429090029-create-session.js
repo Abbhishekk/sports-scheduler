@@ -19,7 +19,7 @@ module.exports = {
         type: Sequelize.STRING
       },
       playername: {
-        type: Sequelize.ARRAY
+        type: Sequelize.ARRAY(Sequelize.STRING)
       },
       noplayers: {
         type: Sequelize.INTEGER
