@@ -34,6 +34,21 @@ module.exports = (sequelize, DataTypes) => {
     static getSessionById(id){
       return this.findByPk(id)
     }
+
+    static async removePlayer(playername,id){
+     
+      const sessions = await session.findByPk(id);
+      var index = sessions.playername.indexOf(playername)
+      const player = sessions.playername.splice(index,1);
+      //console.log(player,sessions.playername)
+      return this.update({
+        playername: sessions.playername
+      },{
+        where: {
+          id: id
+        }
+      })
+    }
   }
   session.init({
     sportname: DataTypes.STRING,

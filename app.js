@@ -139,11 +139,24 @@ app.post('/createsession',async (request, response) => {
     
 })
 
-app.get('/session/:id', async (request, response) => {
+app.get('/session/:id/:user', async (request, response) => {
     const allSessions = await session.getSessionById(request.params.id);
     response.render('session',{
-        allSessions
+        allSessions,
+        user: request.params.user
     })
+})
+
+app.put('/session/:playername/:id',async (request,response) => {
+    const sessions = await session.findByPk(request.params.id);
+    console.log(session)
+    try {
+        const updatedplayer = await session.removePlayer(request.params.playername,request.params.id);
+        return response.json(updatedplayer);
+      } catch (error) {
+        console.log(error);
+        return response.status(422).json(error);
+      }
 })
 
 module.exports = app

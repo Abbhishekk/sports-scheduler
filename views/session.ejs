@@ -7,6 +7,23 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <title>Sports Scheduler</title>
 </head>
+
+<script>
+    function removeplayer(playername,id){
+    fetch(`/session/${playername}/${id}`,{
+      method : 'PUT',
+      headers : {"content-type" : 'application/json'}
+    })
+    .then((res) =>{
+      if(res.ok){
+        window.location.reload();
+      }
+       
+    })
+    .catch((error)=> console.log(error)); 
+  }
+</script>
+
 <body>
     <%- include('header',{page: 'name'})%>
     <div class="container mx-auto">
@@ -18,16 +35,34 @@
         </div>
         <div class=" m-10">
             <h1 class="text-6xl">Players</h1>
-            <div class="flex gap-10">
+            <div class="flex lg:flex-nowrap sm:flex-wrap gap-10">
                 <% for(var i=0; i<allSessions.playername.length; i++) { %>
-                <a href="#" class="w-60 mt-10 rounded-lg flex text-white px-10 py-4 bg-lime-950 h-16 cursor-pointer overflow-auto hover:bg-white hover:text-lime-950 border-2 border-lime-950">
-                    <div >
-                        <%= allSessions.playername[i] %>
-                    </div>
-                </a>
+                <div class="w-full mt-10 rounded-lg  text-white px-10 py-4 bg-lime-950 h-16 cursor-pointer flex  justify-between overflow-auto hover:bg-white hover:text-lime-950 border-2 border-lime-950">    
+                        <a href="#"  class="">
+                            <%= allSessions.playername[i] %>
+                        </a>
+                        <a href="#" onclick="removeplayer('<%= allSessions.playername[i] %>' , <%= allSessions.id %>);">        
+                            <svg xmlns="http://www.w3.org/2000/svg"  fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 ">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </a>
+                </div>    
+                
                 <% } %>
             </div>
         </div>
+        <% if(user == 'admin'){ %>
+        <div class="m-10 gap-10">
+            <a href="#" class="mx-5">Edit Session</a>
+            <a href="#">Cancel Session</a>
+        </div>
+        <% }
+        else { %>
+            <div class="m-10 gap-10 text-2xl">
+                <a href="#" class="mx-auto">Join Session</a>
+                
+            </div>
+        <% } %>
     </div>
         
     <%- include('footer')%>
