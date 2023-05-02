@@ -14,6 +14,7 @@
         <form class="container mx-auto my-10" action="/createsession" method="POST">
             <h2 class="text-6xl my-10">Create Session</h2>
             <input type="text" name="sportname" id="sportname" class="hidden" value="<%= sportId %>" hidden>
+            <input type="text" name="user" id="user" class="hidden" value="<%= user %>" hidden>
             <div>
                 <p class=" mb-0 text-2xl">Input Date and Time of session</p>
                 <input type="datetime-local" name="dateTime" id="date" class="border-2 mt-4 p-2 rounded w-60 border-lime-950">

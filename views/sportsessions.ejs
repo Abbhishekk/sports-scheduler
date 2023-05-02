@@ -15,6 +15,7 @@
       headers : {"content-type" : 'application/json'},
     })
     .then((res) =>{
+        
       if(res.ok){
         window.location.assign('/admin');
       }
@@ -49,7 +50,7 @@
         <% } %>
     </div>
     <div class="container m-auto mt-10 p-auto text-xl gap-10" >
-        <a href="/createsession/<%= sportID %>" >Create a new session</a>
+        <a href="/createsession/<%= sportID %>/<%= user%>" >Create a new session</a>
         <a href="#" class="px-10">View previous sessions</a>
     </div>
     <%- include('footer')%>

@@ -9,6 +9,26 @@
 </head>
 
 <script>
+    function cancelsession(id,sportname,user){
+        fetch(`/cancelsession`,{
+                method : 'PUT',
+                headers : {"content-type" : 'application/json'},
+                body : JSON.stringify({
+                    id: id,
+                    sportname: sportname,
+                    user: user
+                })
+            })
+            .then((res) =>{
+                console.log(res);
+            if(res.ok){
+                console.log(res);
+                console.log('session canceled');
+            }
+            
+            })
+            .catch((error)=> console.log(error));
+    }
     function removeplayer(playername,id){
     fetch(`/session/${playername}/${id}`,{
       method : 'PUT',
@@ -54,7 +74,7 @@
         <% if(user == 'admin'){ %>
         <div class="m-10 gap-10">
             <a href="#" class="mx-5">Edit Session</a>
-            <a href="#">Cancel Session</a>
+            <a href="#" onclick="cancelsession(<%= allSessions.id %>,'<%= allSessions.sportname %>','<%= user %>')">Cancel Session</a>
         </div>
         <% }
         else { %>

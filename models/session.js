@@ -27,7 +27,27 @@ module.exports = (sequelize, DataTypes) => {
     static getSessions({sportname}){
       return this.findAll({
         where: {
+          sportname: sportname,
+          sessioncreated: true
+        }
+      })
+    }
+    static getAllSessions({sportname}){
+      return this.findAll({
+        where: {
           sportname: sportname
+        }
+      })
+    }
+
+    static async cancelSession(id){
+      
+      //console.log(player,sessions.playername)
+      return this.update({
+        sessioncreated: false
+      },{
+        where: {
+          id: id
         }
       })
     }
