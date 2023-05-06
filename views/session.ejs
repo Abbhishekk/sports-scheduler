@@ -4,11 +4,15 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="<%= csrfToken %>">
     <script src="https://cdn.tailwindcss.com"></script>
     <title>Sports Scheduler</title>
 </head>
 
 <script>
+    var token = document
+                      .querySelector('meta[name = "csrf-token"]')
+                      .getAttribute('content');
     function cancelsession(id,sportname,user){
         fetch(`/cancelsession`,{
                 method : 'PUT',
@@ -16,7 +20,8 @@
                 body : JSON.stringify({
                     id: id,
                     sportname: sportname,
-                    user: user
+                    user: user,
+                    '_csrf' : token
                 })
             })
             .then((res) =>{
@@ -32,7 +37,10 @@
     function removeplayer(playername,id){
     fetch(`/session/${playername}/${id}`,{
       method : 'PUT',
-      headers : {"content-type" : 'application/json'}
+      headers : {"content-type" : 'application/json'},
+      body: {
+        '_csrf': token
+      }
     })
     .then((res) =>{
       if(res.ok){
@@ -45,7 +53,7 @@
 </script>
 
 <body>
-    <%- include('header',{page: 'name'})%>
+    <%- include('header',{page: 'signout'})%>
     <div class="container mx-auto">
         <h1 class=" text-6xl my-10 m-10"><%= allSessions.sportname %> Session #<%= allSessions.id %></h1>
         <div class="my-10 text-2xl m-10">

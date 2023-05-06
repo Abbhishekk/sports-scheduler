@@ -4,7 +4,10 @@
     "password": "Abhishek",
     "database": "sports_scheduler",
     "host": "127.0.0.1",
-    "dialect": "postgres"
+    "dialect": "postgres",
+    "define": {
+      "freezeTableName": true
+    }
   },
   "test": {
     "username": "postgres",

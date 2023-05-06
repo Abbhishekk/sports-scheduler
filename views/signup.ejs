@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
+  <meta name="csrf-token" content="<%= csrfToken %>">
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="./css/styles.css" />
   <title>Sports Scheduler</title>
@@ -21,6 +21,8 @@
           <div class=" gap-2 py-4">
             <div class="font-auto py-2">
                 <label for="firstname">First Name: </label>
+                
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>"/>
               <input type="text" name="firstname" placeholder="First Name" class="border border-gray-300 rounded text-gray-900 w-full p-2 text-sm"  />
             </div>
             <div class="flex-auto py-2">
@@ -30,10 +32,14 @@
             <div class="pt-2 pb-2">
                 <label for="">Role:</label>
                 <div>
-                    <input type="radio" name="role" class="" id="admin">
-                    <label for="admin">Admin</label>
-                    <input type="radio" name="role" class="" id="player">
-                    <label for="player">Player</label>
+                    <label for="admin">
+                      <input type="radio" name="role" class="" id="admin" value="admin">
+                      Admin
+                    </label>
+                    <label for="player">
+                      <input type="radio" name="role" class="" id="player" value="player">
+                      Player
+                    </label>
                 </div>
                 
                     

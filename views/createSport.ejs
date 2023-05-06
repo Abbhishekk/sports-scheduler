@@ -4,11 +4,12 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="<%= csrfToken %>">
     <script src="https://cdn.tailwindcss.com"></script>
     <title>Sports Scheduler</title>
 </head>
 <body>
-    <%- include('header',{page: "name"})%>
+    <%- include('header',{page: "signout"})%>
     <p class="text-6xl text-center mt-10">Create new Sport</p>
     <form action="/createsport" method="POST" class="text-center block mt-10 p-6 text-2xl block">
         <p class="m-4 mb-0">Enter sport Name</p><br>

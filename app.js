@@ -1,33 +1,38 @@
 const express = require('express');
 const path = require('path')
 const app = express();
-const {sports, session }= require("./models");
+const {sports, session, user }= require("./models");
 const bodyParser = require('body-parser');
 var cookieparser = require('cookie-parser');
+const csrf = require('csurf');
 const passport = require('passport');
 const ConnectEnsureLogin = require('connect-ensure-login');
-const session = require('express-session');
+const expresssession = require('express-session');
 const LocalStrategy = require('passport-local');
 const bcrypt = require('bcrypt')
-
+const flash = require('connect-flash');
 app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
-app.use(cookieParser("shh! some secret string"));
+app.use(cookieparser("shh! some secret string"));
 app.set("view engine", "ejs");
 
 app.use(
-    session({
+    expresssession({
       secret: "My-secret-key-1515464651315646115316",
       cookie: {
         maxAge: 24 * 60 * 60 * 1000,
       },
     })
   );
-
+  app.use(csrf({ cookie: true }));
   app.use(passport.initialize());
   app.use(passport.session());
-
+  app.use(flash());
+  app.use(function (request, response, next) {
+    response.locals.messages = request.flash();
+    next();
+  });
   passport.use(
     new LocalStrategy(
       {
@@ -86,53 +91,147 @@ app.use(
   });
 
 app.get('/',(request, response) =>{
-    response.render('index');
+    response.render('index',{
+      csrfToken: request.csrfToken()
+    });
+});
+app.post("/users", async (request, response) => {
+  console.log("/users is called");
+  const checkedButton = request.body.role;
+  console.log(checkedButton)
+  const hashPwd = await bcrypt.hash(request.body.password, salRounds);
+  console.log(hashPwd)
+  if (!request.body.firstname) {
+    request.flash("error", "Enter name");
+    return response.redirect("/signup");
+  }
+  if (!request.body.email) {
+    request.flash("error", "Enter email");
+    return response.redirect("/signup");
+  }
+  if (!request.body.password) {
+    request.flash("error", "Enter password");
+    return response.redirect("/signup");
+  }
+  //console.log(hashPwd)
+  try {
+    console.log(request.body.role.id);
+    const User = await user.create({
+      fname: request.body.firstname,
+      lname: request.body.lastname,
+      email: request.body.email,
+      password: hashPwd,
+      role: checkedButton
+    });
+    console.log(User);
+    request.login(User, (err) => {
+      if (err) {
+        console.log("Error loging in");
+        response.redirect('/');
+      }
+      response.redirect("/admin");
+    });
+  } catch (error) {
+    console.log("Email already registered!", error);
+    response.render("signup", { failure: true, csrfToken: request.csrfToken() });
+  }
 });
 
 app.get('/login',(request, response) => {
-    response.render('signin');
+    response.render('signin',{
+      csrfToken: request.csrfToken(),
+    });
 });
+
+app.get("/signout", (request, response, next) => {
+  console.log("/signout is called");
+  request.logout((err) => {
+    if (err) {
+      return next(err);
+    }
+    response.redirect("/");
+  });
+});
+
+app.post(
+  "/session",
+  passport.authenticate("local", {
+    failureRedirect: "/login",
+    failureFlash: true,
+  }),
+  async (request, response) => {
+    console.log(request.user);
+    console.log("/session is called");
+    const loggedinUser = request.user.id;
+    console.log(loggedinUser);
+    const allSports = await sports.getSports();
+    const getUser = await user.getUser(loggedinUser)
+    response.render('useradmin',{
+        getUser,
+        allSports,
+        csrfToken: request.csrfToken()
+    })
+  }
+);
+
 app.get('/signup',(request, response) => {
-    response.render('signup');
+    response.render('signup',{
+      csrfToken: request.csrfToken()
+    });
 });
 
 app.get('/admin',async (request, response) => {  
-    const allSports = await sports.getSports();
-    response.render('useradmin',{
-        allSports
-    })
+  const loggedinUser = request.user.id;
+  console.log(loggedinUser);
+  const allSports = await sports.getSports();
+  const getUser = await user.getUser(loggedinUser)
+  response.render('useradmin',{
+      getUser,
+      allSports,
+      csrfToken: request.csrfToken()
+  })
 })
 
 app.get('/user', async (request, response) => {
+  const loggedinUser = request.user.id;
+  console.log(loggedinUser);
     const allSports = await sports.getSports();
+    const getUser = await user.getUser(loggedinUser)
     response.render('player',{
-        allSports
+        getUser,
+        allSports,
+        csrfToken: request.csrfToken()
     });
 })
 
 app.get('/createsport', (request, response) => {
     response.render('createsport',{
-        sportcreated: false
+        sportcreated: false,
+        csrfToken: request.csrfToken()
     })
 })
 
 app.post('/createsport', async (request, response) => {
     try {
         console.log(request.body)
-        if(!sports.findSportByName(request.body.sport)){
+        if(!sports.findSportByName(request.body.sport,request.user.id)){
             response.render('createsport',{
-                sportcreated: true
+                sportcreated: true,
+                csrfToken: request.csrfToken()
             })
         }
         else{
-            const sport = await sports.createsports({sport: request.body.sport});
-        const allSessions = await session.getSessions({sportname: sport.sport_name});
+            const sport = await sports.createsports({sport: request.body.sport, userId: request.user.id});
+        const allSessions = await session.getSessions({sportname: sport.sport_name, userId: request.user.id});
+        const getUser = await user.getUser(request.user.id)
         console.log(sport.id);
         response.render('sportsessions',{
             user: "admin",
+            getUser,
             name: request.body.sport,
             sportID : sport.id,
-            allSessions
+            allSessions,
+            csrfToken: request.csrfToken()
         });
         }
         
@@ -142,26 +241,31 @@ app.post('/createsport', async (request, response) => {
 })
 app.get('/sportsession',async (request, response) => {
     console.log(request.body.id);
-    const sport = await sports.getSports();
+    const getUser = await user.getUser(request.user.id);
+    const sport = await sports.getSports(request.user.id);
     //console.log(sport)
     //const allSessions = await session.getSessions(sport.sport_name);
     response.render('sportsessions',{
+      getUser,
         user: "admin",
         name: sport.sport_name,
         sportID : sport.id,
-    
+        csrfToken: request.csrfToken()
     });
 })
 app.get('/sportsession/:id/:user',async (request, response) => {
     console.log(request.params.id);
-    const sport = await sports.findSportById(request.params.id);
+    const sport = await sports.findSportById(request.params.id, request.user.id);
     console.log(sport);
-    const allSessions = await session.getSessions({ sportname: sport.sport_name});
+    const allSessions = await session.getSessions({ sportname: sport.sport_name, userId: request.user.id});
+    const getUser= await user.getUser(request.user.id)
     response.render('sportsessions',{
+        getUser,
         user: request.params.user,
         name: sport.sport_name,
         sportID : sport.id,
-        allSessions
+        allSessions,
+        csrfToken: request.csrfToken()
     });
 })
 
@@ -173,6 +277,7 @@ app.delete(`/sportsession/:id`,async (request, response) => {
       const deleteTodo = await sports.destroy({
         where: {
           id: request.params.id,
+          userId: request.user.id
         },
       });
       return response.send(deleteTodo ? true : false);
@@ -185,7 +290,8 @@ app.get('/createsession/:id/:user', (request, response) => {
     
     response.render('createsession',{
         sportId: request.params.id,
-        user: request.params.user
+        user: request.params.user,
+        csrfToken: request.csrfToken()
     })
 })
 app.post('/createsession',async (request, response) => {
@@ -214,7 +320,8 @@ app.get('/session/:id/:user', async (request, response) => {
     const allSessions = await session.getSessionById(request.params.id);
     response.render('session',{
         allSessions,
-        user: request.params.user
+        user: request.params.user,
+        csrfToken: request.csrfToken()
     })
 })
 
