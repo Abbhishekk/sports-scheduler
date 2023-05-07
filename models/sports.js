@@ -18,25 +18,28 @@ module.exports = (sequelize, DataTypes) => {
 
     }
 
-    static createsports({sport}){
+    static createsports({sport,userId}){
       return this.create({
-        sport_name: sport
+        sport_name: sport,
+        userId: userId
       })
     }
-    static getSports(){
+    static getSports(userId){
       return this.findAll();
     }
     
-    static async findSportByName(sportname){
-      const getSport= await this.findAll({
+    static async findSportByName(sportname,userId){
+      const getSport= await this.findOne({
         where: {
-          sport_name: sportname
+          sport_name: sportname,
+          userId: {
+            [op.eq]: userId
         }
-      })
+      }})
       console.log(getSport.length)
       return ((getSport.length == 0) ? true: false);
     }
-    static findSportById(id){
+    static findSportById(id, userId){
       return this.findByPk(id);
     }
   }

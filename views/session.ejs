@@ -38,9 +38,9 @@
     fetch(`/session/${playername}/${id}`,{
       method : 'PUT',
       headers : {"content-type" : 'application/json'},
-      body: {
+      body: JSON.stringify({
         '_csrf': token
-      }
+      })
     })
     .then((res) =>{
       if(res.ok){
@@ -50,6 +50,26 @@
     })
     .catch((error)=> console.log(error)); 
   }
+
+  function addplayer(playername,id){
+    fetch(`/addplayer`,{
+      method : 'PUT',
+      headers : {"content-type" : 'application/json'},
+      body: JSON.stringify({
+        '_csrf': token,
+        playername,
+        id
+      })
+    })
+    .then((res) =>{
+      if(res.ok){
+        window.location.reload();
+      }
+       
+    })
+    .catch((error)=> console.log(error)); 
+  }
+
 </script>
 
 <body>
@@ -79,7 +99,7 @@
                 <% } %>
             </div>
         </div>
-        <% if(user == 'admin'){ %>
+        <% if(getUser == 'admin' && allSessions.userId == getUser.id){ %>
         <div class="m-10 gap-10">
             <a href="#" class="mx-5">Edit Session</a>
             <a href="#" onclick="cancelsession(<%= allSessions.id %>,'<%= allSessions.sportname %>','<%= user %>')">Cancel Session</a>
@@ -87,7 +107,7 @@
         <% }
         else { %>
             <div class="m-10 gap-10 text-2xl">
-                <a href="#" class="mx-auto">Join Session</a>
+                <a href="#" onclick="addplayer('<%= getUser.fname %>', <%= allSessions.id %> )" class="mx-auto">Join Session</a>
                 
             </div>
         <% } %>

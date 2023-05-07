@@ -16,10 +16,25 @@ module.exports = (sequelize, DataTypes) => {
       })
     }
 
-    static addSession({sportname, dateTime, address, players, noplayers, sessioncreated}){
+    static async addPlayer(id,player){
+      const getSession = await this.findByPk(id);
+      let playernames = getSession.playername
+      playernames.push(player)
+      console.log(playernames)
+      return this.update({
+        playername: playernames
+      },{
+        where: {
+          id: id
+        }
+      })
+    }
+
+    static addSession({sportname, dateTime, address, players, noplayers, sessioncreated, userId}){
       return this.create({
         sportname: sportname,
         time: dateTime,
+        userId: userId,
         address: address,
         playername: players,
         noplayers: noplayers,
@@ -27,30 +42,34 @@ module.exports = (sequelize, DataTypes) => {
       })
     }
 
-    static getSessions({sportname}){
+    static getSessions({sportname,userId}){
       return this.findAll({
         where: {
           sportname: sportname,
-          sessioncreated: true
+          sessioncreated: true,
+          userId
         }
       })
     }
     static getAllSessions({sportname}){
       return this.findAll({
         where: {
-          sportname: sportname
+          sportname: sportname,
+          time: {
+            [op.gt]: new date(),
+          }
         }
       })
     }
 
-    static async cancelSession(id){
+    static async cancelSession(id,userId){
       
       //console.log(player,sessions.playername)
       return this.update({
         sessioncreated: false
       },{
         where: {
-          id: id
+          userId: id
         }
       })
     }

@@ -129,7 +129,12 @@ app.post("/users", async (request, response) => {
         console.log("Error loging in");
         response.redirect('/');
       }
-      response.redirect("/admin");
+      if(checkedButton == 'admin'){
+        response.redirect("/admin");
+      }
+      if(checkedButton == 'player'){
+        response.redirect("/user");
+      }
     });
   } catch (error) {
     console.log("Email already registered!", error);
@@ -165,12 +170,14 @@ app.post(
     const loggedinUser = request.user.id;
     console.log(loggedinUser);
     const allSports = await sports.getSports();
-    const getUser = await user.getUser(loggedinUser)
-    response.render('useradmin',{
-        getUser,
-        allSports,
-        csrfToken: request.csrfToken()
-    })
+    const getUser = await user.getUser(loggedinUser);
+    if(request.user.role == 'admin'){
+      response.redirect('/admin');
+    }
+    if(request.user.role == 'player'){
+      response.redirect('/user');
+    }
+    
   }
 );
 
@@ -180,10 +187,10 @@ app.get('/signup',(request, response) => {
     });
 });
 
-app.get('/admin',async (request, response) => {  
+app.get('/admin',ConnectEnsureLogin.ensureLoggedIn(),async (request, response) => {  
   const loggedinUser = request.user.id;
   console.log(loggedinUser);
-  const allSports = await sports.getSports();
+  const allSports = await sports.getSports(loggedinUser);
   const getUser = await user.getUser(loggedinUser)
   response.render('useradmin',{
       getUser,
@@ -192,7 +199,7 @@ app.get('/admin',async (request, response) => {
   })
 })
 
-app.get('/user', async (request, response) => {
+app.get('/user',ConnectEnsureLogin.ensureLoggedIn(), async (request, response) => {
   const loggedinUser = request.user.id;
   console.log(loggedinUser);
     const allSports = await sports.getSports();
@@ -204,14 +211,14 @@ app.get('/user', async (request, response) => {
     });
 })
 
-app.get('/createsport', (request, response) => {
+app.get('/createsport',ConnectEnsureLogin.ensureLoggedIn(), (request, response) => {
     response.render('createsport',{
         sportcreated: false,
         csrfToken: request.csrfToken()
     })
 })
 
-app.post('/createsport', async (request, response) => {
+app.post('/createsport',ConnectEnsureLogin.ensureLoggedIn(), async (request, response) => {
     try {
         console.log(request.body)
         if(!sports.findSportByName(request.body.sport,request.user.id)){
@@ -239,7 +246,7 @@ app.post('/createsport', async (request, response) => {
         console.log(error);
     }
 })
-app.get('/sportsession',async (request, response) => {
+app.get('/sportsession',ConnectEnsureLogin.ensureLoggedIn(),async (request, response) => {
     console.log(request.body.id);
     const getUser = await user.getUser(request.user.id);
     const sport = await sports.getSports(request.user.id);
@@ -253,7 +260,7 @@ app.get('/sportsession',async (request, response) => {
         csrfToken: request.csrfToken()
     });
 })
-app.get('/sportsession/:id/:user',async (request, response) => {
+app.get('/sportsession/:id/:user',ConnectEnsureLogin.ensureLoggedIn(),async (request, response) => {
     console.log(request.params.id);
     const sport = await sports.findSportById(request.params.id, request.user.id);
     console.log(sport);
@@ -269,7 +276,7 @@ app.get('/sportsession/:id/:user',async (request, response) => {
     });
 })
 
-app.delete(`/sportsession/:id`,async (request, response) => {
+app.delete(`/sportsession/:id`,ConnectEnsureLogin.ensureLoggedIn(),async (request, response) => {
     console.log("We have to delete a Todo with ID: ", request.params.id);
     // FILL IN YOUR CODE HERE
 
@@ -277,7 +284,7 @@ app.delete(`/sportsession/:id`,async (request, response) => {
       const deleteTodo = await sports.destroy({
         where: {
           id: request.params.id,
-          userId: request.user.id
+          
         },
       });
       return response.send(deleteTodo ? true : false);
@@ -286,7 +293,7 @@ app.delete(`/sportsession/:id`,async (request, response) => {
       return response.status(422).send(error);
     }
 })
-app.get('/createsession/:id/:user', (request, response) => {
+app.get('/createsession/:id/:user',ConnectEnsureLogin.ensureLoggedIn(), (request, response) => {
     
     response.render('createsession',{
         sportId: request.params.id,
@@ -294,7 +301,7 @@ app.get('/createsession/:id/:user', (request, response) => {
         csrfToken: request.csrfToken()
     })
 })
-app.post('/createsession',async (request, response) => {
+app.post('/createsession',ConnectEnsureLogin.ensureLoggedIn(),async (request, response) => {
     var playerArray = request.body.playername.split(',');
     const sportname = await sports.findSportById(request.body.sportname);
     try {
@@ -304,11 +311,12 @@ app.post('/createsession',async (request, response) => {
         dateTime: request.body.dateTime,
         address: request.body.address,
         players: playerArray,
+        userId: request.user.id,
         noplayers: request.body.noPlayer,
         sessioncreated: true
     });
     
-    const allSessions = await session.getSessions({ sportname: sportname.sport_name});
+    const allSessions = await session.getSessions({ sportname: sportname.sport_name, userId: request.user.id});
     response.redirect(`/sportsession/${sportname.id}/${request.body.user}`);
     } catch (error) {
         console.log(error)
@@ -316,16 +324,18 @@ app.post('/createsession',async (request, response) => {
     
 })
 
-app.get('/session/:id/:user', async (request, response) => {
+app.get('/session/:id/:user',ConnectEnsureLogin.ensureLoggedIn(), async (request, response) => {
+    const getUser = await user.getUser(request.user.id)
     const allSessions = await session.getSessionById(request.params.id);
     response.render('session',{
+        getUser,
         allSessions,
         user: request.params.user,
         csrfToken: request.csrfToken()
     })
 })
 
-app.put('/session/:playername/:id',async (request,response) => {
+app.put('/session/:playername/:id',ConnectEnsureLogin.ensureLoggedIn(),async (request,response) => {
     const sessions = await session.findByPk(request.params.id);
     console.log(session)
     try {
@@ -337,9 +347,9 @@ app.put('/session/:playername/:id',async (request,response) => {
       }
 })
 
-app.put('/cancelsession',async  (request, response) => {
+app.put('/cancelsession',ConnectEnsureLogin.ensureLoggedIn(),async  (request, response) => {
     try {
-        const canceledSession = await session.cancelSession(request.body.id);
+        const canceledSession = await session.cancelSession(request.body.id,request.user.id);
         const sportId = await sports.findAll({
             where: {
                 sport_name: request.body.sportname
@@ -350,6 +360,15 @@ app.put('/cancelsession',async  (request, response) => {
     } catch (error) {
         console.log(error);
     }
+})
+app.put('/addPlayer',async(request,response) => {
+  try {
+      const addPlayer = await session.addPlayer(request.body.id, request.body.playername);
+      console.log(addPlayer);
+      response.send(addPlayer);
+  } catch (error) {
+    console.log(error)
+  }
 })
 
 module.exports = app
