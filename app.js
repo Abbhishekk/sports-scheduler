@@ -221,7 +221,7 @@ app.get('/user',ConnectEnsureLogin.ensureLoggedIn(), async (request, response) =
 })
 
 app.get('/createsport',ConnectEnsureLogin.ensureLoggedIn(), (request, response) => {
-    response.render('createsport',{
+    response.render('createSport',{
         sportcreated: false,
         csrfToken: request.csrfToken()
     })
