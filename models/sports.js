@@ -24,6 +24,19 @@ module.exports = (sequelize, DataTypes) => {
         userId: userId
       })
     }
+    static async deleteSport(id){
+      return await this.destroy({
+        where : {
+          id: id
+        }
+      }).then(function(rowDeleted){ // rowDeleted will return number of rows deleted
+        if(rowDeleted === 1){
+           console.log('Deleted successfully');
+         }
+      }, function(err){
+          console.log(err); 
+      });
+    }
     static getSports(userId){
       return this.findAll();
     }
@@ -32,19 +45,22 @@ module.exports = (sequelize, DataTypes) => {
       const getSport= await this.findOne({
         where: {
           sport_name: sportname,
-          userId: {
-            [op.eq]: userId
-        }
+          userId: userId
       }})
-      console.log(getSport.length)
-      return ((getSport.length == 0) ? true: false);
+      //console.log(getSport.length)
+      if(getSport != null){
+        return ((getSport.length == 0) ? true: false);
+      }
+      else
+      return ((getSport == null) ? true: false);
     }
     static findSportById(id, userId){
       return this.findByPk(id);
     }
   }
   sports.init({
-    sport_name: DataTypes.STRING
+    sport_name: {type: DataTypes.STRING,
+                  unique: true}
   }, {
     sequelize,
     modelName: 'sports',

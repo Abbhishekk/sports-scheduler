@@ -14,10 +14,11 @@
                       .querySelector('meta[name = "csrf-token"]')
                       .getAttribute('content');
     function deleteSport(id){
-    fetch(`/sportsession/${id}`,{
+    fetch(`/sportsession`,{
       method : 'DELETE',
       headers : {"content-type" : 'application/json'},
       body: json.stringify({
+        id: id,
         '_csrf': token
       })
     })

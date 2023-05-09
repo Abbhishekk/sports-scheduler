@@ -192,11 +192,20 @@ app.get('/admin',ConnectEnsureLogin.ensureLoggedIn(),async (request, response) =
   console.log(loggedinUser);
   const allSports = await sports.getSports(loggedinUser);
   const getUser = await user.getUser(loggedinUser)
-  response.render('useradmin',{
+  
+  if (request.accepts("HTML")) {
+    response.render('useradmin',{
       getUser,
       allSports,
       csrfToken: request.csrfToken()
   })
+  } else {
+    response.json({
+      getUser,
+      allSports,
+      
+    });
+  }
 })
 
 app.get('/user',ConnectEnsureLogin.ensureLoggedIn(), async (request, response) => {
@@ -220,8 +229,9 @@ app.get('/createsport',ConnectEnsureLogin.ensureLoggedIn(), (request, response) 
 
 app.post('/createsport',ConnectEnsureLogin.ensureLoggedIn(), async (request, response) => {
     try {
-        console.log(request.body)
-        if(!sports.findSportByName(request.body.sport,request.user.id)){
+        console.log(request.body, sports.findSportByName(request.body.sport,request.user.id))
+        var sportName = await sports.findSportByName(request.body.sport,request.user.id);
+        if(!sportName){
             response.render('createsport',{
                 sportcreated: true,
                 csrfToken: request.csrfToken()
@@ -276,20 +286,16 @@ app.get('/sportsession/:id/:user',ConnectEnsureLogin.ensureLoggedIn(),async (req
     });
 })
 
-app.delete(`/sportsession/:id`,ConnectEnsureLogin.ensureLoggedIn(),async (request, response) => {
-    console.log("We have to delete a Todo with ID: ", request.params.id);
+app.delete(`/sportsession`,ConnectEnsureLogin.ensureLoggedIn(),async (request, response) => {
+    console.log("We have to delete a Sport with ID: ", request.body.id);
     // FILL IN YOUR CODE HERE
 
     try {
-      const deleteTodo = await sports.destroy({
-        where: {
-          id: request.params.id,
-          
-        },
-      });
-      return response.send(deleteTodo ? true : false);
+      const deleteSport = await sports.deleteSport(request.params.id)
+      console.log(deleteSport)
+      return response.send(deleteSport ? true : false);
     } catch (error) {
-      console.log(error);
+      console.log(error,response.status);
       return response.status(422).send(error);
     }
 })
@@ -300,6 +306,20 @@ app.get('/createsession/:id/:user',ConnectEnsureLogin.ensureLoggedIn(), (request
         user: request.params.user,
         csrfToken: request.csrfToken()
     })
+
+    if (request.accepts("HTML")) {
+      response.render('createsession',{
+        sportId: request.params.id,
+        user: request.params.user,
+        csrfToken: request.csrfToken()
+    })
+    } else {
+      response.json({
+        sportId: request.params.id,
+        user: request.params.user
+        
+      });
+    }
 })
 app.post('/createsession',ConnectEnsureLogin.ensureLoggedIn(),async (request, response) => {
     var playerArray = request.body.playername.split(',');
@@ -333,6 +353,26 @@ app.get('/session/:id/:user',ConnectEnsureLogin.ensureLoggedIn(), async (request
         user: request.params.user,
         csrfToken: request.csrfToken()
     })
+})
+
+app.get('/sesson',ConnectEnsureLogin.ensureLoggedIn(), async (request,response) => {
+  const getUser = await user.getUser(request.user.id)
+  const allSessions = await session.getSessionById(request.user.id);
+  if (request.accepts("HTML")) {
+    response.render('session',{
+      getUser,
+      allSessions,
+      user: request.user.role,
+      csrfToken: request.csrfToken()
+  })
+  } else {
+    response.json({
+      getUser,
+      allSessions,
+      user: request.user.role,
+      
+    });
+  }
 })
 
 app.put('/session/:playername/:id',ConnectEnsureLogin.ensureLoggedIn(),async (request,response) => {
