@@ -15,7 +15,7 @@
     <%- include('header',{page: "signout"})%>
     <div class="container m-auto p-auto ">
         <div class=" mx-auto pt-6 mt-3 text-6xl flex ">
-            <h1>Welcome Jhon Doe</h1>
+            <h1>Welcome <%= getUser.fname%></h1>
         </div>
         <div class="pt-6 pb-4 flex gap-5">
             <a href="/createsport"><input type="button" class="bg-lime-950 text-white p-2 cursor-pointer rounded-lg border-2 border-teal-400 hover:bg-white hover:text-black" name="sport" id="sport" value="Create Sport"></a>

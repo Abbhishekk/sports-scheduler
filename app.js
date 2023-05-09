@@ -169,8 +169,7 @@ app.post(
     console.log("/session is called");
     const loggedinUser = request.user.id;
     console.log(loggedinUser);
-    const allSports = await sports.getSports();
-    const getUser = await user.getUser(loggedinUser);
+    
     if(request.user.role == 'admin'){
       response.redirect('/admin');
     }
@@ -326,7 +325,7 @@ app.post('/createsession',ConnectEnsureLogin.ensureLoggedIn(),async (request, re
     const sportname = await sports.findSportById(request.body.sportname);
     try {
         console.log(session)
-        const sessions = await session.addSession({
+         await session.addSession({
         sportname:sportname.sport_name,
         dateTime: request.body.dateTime,
         address: request.body.address,
@@ -336,7 +335,7 @@ app.post('/createsession',ConnectEnsureLogin.ensureLoggedIn(),async (request, re
         sessioncreated: true
     });
     
-    const allSessions = await session.getSessions({ sportname: sportname.sport_name, userId: request.user.id});
+    //const allSessions = await session.getSessions({ sportname: sportname.sport_name, userId: request.user.id});
     response.redirect(`/sportsession/${sportname.id}/${request.body.user}`);
     } catch (error) {
         console.log(error)
@@ -377,7 +376,7 @@ app.get('/sesson',ConnectEnsureLogin.ensureLoggedIn(), async (request,response) 
 
 app.put('/session/:playername/:id',ConnectEnsureLogin.ensureLoggedIn(),async (request,response) => {
     const sessions = await session.findByPk(request.params.id);
-    console.log(session)
+    console.log(sessions)
     try {
         const updatedplayer = await session.removePlayer(request.params.playername,request.params.id);
         return response.json(updatedplayer);
