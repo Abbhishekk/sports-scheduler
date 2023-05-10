@@ -91,9 +91,21 @@ app.use(
   });
 
 app.get('/',(request, response) =>{
+  if(request.isAuthenticated()){
+    if(request.user.role == 'admin'){
+      response.redirect('/admin')
+    }
+    else{
+      response.redirect('/user');
+    }
+    
+  }
+  else{
     response.render('index',{
       csrfToken: request.csrfToken()
     });
+  }
+    
 });
 app.post("/users", async (request, response) => {
   console.log("/users is called");
@@ -143,9 +155,21 @@ app.post("/users", async (request, response) => {
 });
 
 app.get('/login',(request, response) => {
+
+  if(request.isAuthenticated()){
+    if(request.user.role == 'admin'){
+      response.redirect('/admin')
+    }
+    else{
+      response.redirect('/user');
+    }
+  }
+  else{
     response.render('signin',{
       csrfToken: request.csrfToken(),
     });
+  }
+    
 });
 
 app.get("/signout", (request, response, next) => {
