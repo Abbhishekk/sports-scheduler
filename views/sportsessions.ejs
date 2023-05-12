@@ -17,8 +17,9 @@
     fetch(`/sportsession`,{
       method : 'DELETE',
       headers : {"content-type" : 'application/json'},
-      body: json.stringify({
+      body: JSON.stringify({
         id: id,
+        name: '<%= name %>',
         '_csrf': token
       })
     })

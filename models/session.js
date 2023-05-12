@@ -1,7 +1,5 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
+"use strict";
+const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class session extends Model {
     /**
@@ -11,26 +9,37 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      session.belongsTo(models.user,{
-        foreignKey: 'userId'  
-      })
+      session.belongsTo(models.user, {
+        foreignKey: "userId",
+      });
     }
 
-    static async addPlayer(id,player){
+    static async addPlayer(id, player) {
       const getSession = await this.findByPk(id);
-      let playernames = getSession.playername
-      playernames.push(player)
-      console.log(playernames)
-      return this.update({
-        playername: playernames
-      },{
-        where: {
-          id: id
+      let playernames = getSession.playername;
+      playernames.push(player);
+      console.log(playernames);
+      return this.update(
+        {
+          playername: playernames,
+        },
+        {
+          where: {
+            id: id,
+          },
         }
-      })
+      );
     }
 
-    static addSession({sportname, dateTime, address, players, noplayers, sessioncreated, userId}){
+    static addSession({
+      sportname,
+      dateTime,
+      address,
+      players,
+      noplayers,
+      sessioncreated,
+      userId,
+    }) {
       return this.create({
         sportname: sportname,
         time: dateTime,
@@ -38,70 +47,87 @@ module.exports = (sequelize, DataTypes) => {
         address: address,
         playername: players,
         noplayers: noplayers,
-        sessioncreated: sessioncreated
-      })
+        sessioncreated: sessioncreated,
+      });
     }
 
-    static getSessions({sportname,userId}){
+    static deleteSession(name, userId) {
+      return this.destroy({
+        where: {
+          sportname: name,
+          userId: userId,
+        },
+      });
+    }
+
+    static getSessions({ sportname, userId }) {
       return this.findAll({
         where: {
           sportname: sportname,
           sessioncreated: true,
-          userId
-        }
-      })
+          userId,
+        },
+      });
     }
-    static getAllSessions({sportname}){
+    static getAllSessions({ sportname }) {
       return this.findAll({
         where: {
           sportname: sportname,
           time: {
-            [op.gt]: new date(),
-          }
-        }
-      })
+            // eslint-disable-next-line no-undef
+            [op.gt]: new Date(),
+          },
+        },
+      });
     }
 
-    static async cancelSession(id,userId){
-      
+    static async cancelSession(id) {
       //console.log(player,sessions.playername)
-      return this.update({
-        sessioncreated: false
-      },{
-        where: {
-          userId: id
+      return this.update(
+        {
+          sessioncreated: false,
+        },
+        {
+          where: {
+            userId: id,
+          },
         }
-      })
+      );
     }
-    static getSessionById(id){
-      return this.findByPk(id)
+    static getSessionById(id) {
+      return this.findByPk(id);
     }
 
-    static async removePlayer(playername,id){
-     
+    static async removePlayer(playername, id) {
       const sessions = await session.findByPk(id);
-      var index = sessions.playername.indexOf(playername)
-      const player = sessions.playername.splice(index,1);
+      var index = sessions.playername.indexOf(playername);
+      sessions.playername.splice(index, 1);
       //console.log(player,sessions.playername)
-      return this.update({
-        playername: sessions.playername
-      },{
-        where: {
-          id: id
+      return this.update(
+        {
+          playername: sessions.playername,
+        },
+        {
+          where: {
+            id: id,
+          },
         }
-      })
+      );
     }
   }
-  session.init({
-    sportname: DataTypes.STRING,
-    time: DataTypes.DATE,
-    address: DataTypes.STRING,
-    playername: DataTypes.ARRAY(DataTypes.STRING),
-    noplayers: DataTypes.INTEGER,
-    sessioncreated: DataTypes.BOOLEAN
-  }, {
-    sequelize,
-    modelName: 'session',
-  });
+  session.init(
+    {
+      sportname: DataTypes.STRING,
+      time: DataTypes.DATE,
+      address: DataTypes.STRING,
+      playername: DataTypes.ARRAY(DataTypes.STRING),
+      noplayers: DataTypes.INTEGER,
+      sessioncreated: DataTypes.BOOLEAN,
+    },
+    {
+      sequelize,
+      modelName: "session",
+    }
+  );
   return session;
 };
