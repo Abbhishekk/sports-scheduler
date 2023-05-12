@@ -1,7 +1,6 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
+/* eslint-disable no-unused-vars */
+"use strict";
+const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class sports extends Model {
     /**
@@ -12,58 +11,62 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
 
-      sports.belongsTo(models.user,{
-        foreignKey: 'userId'  
-      })
-
-    }
-
-    static createsports({sport,userId}){
-      return this.create({
-        sport_name: sport,
-        userId: userId
-      })
-    }
-    static async deleteSport(id){
-      return await this.destroy({
-        where : {
-          id: id
-        }
-      }).then(function(rowDeleted){ // rowDeleted will return number of rows deleted
-        if(rowDeleted === 1){
-           console.log('Deleted successfully');
-         }
-      }, function(err){
-          console.log(err); 
+      sports.belongsTo(models.user, {
+        foreignKey: "userId",
       });
     }
-    static getSports(userId){
+
+    static createsports({ sport, userId }) {
+      return this.create({
+        sport_name: sport,
+        userId: userId,
+      });
+    }
+    static async deleteSport(id) {
+      return await this.destroy({
+        where: {
+          id: id,
+        },
+      }).then(
+        function (rowDeleted) {
+          // rowDeleted will return number of rows deleted
+          if (rowDeleted === 1) {
+            console.log("Deleted successfully");
+          }
+        },
+        function (err) {
+          console.log(err);
+        }
+      );
+    }
+    static getSports(userId) {
       return this.findAll();
     }
-    
-    static async findSportByName(sportname,userId){
-      const getSport= await this.findOne({
+
+    static async findSportByName(sportname, userId) {
+      const getSport = await this.findOne({
         where: {
           sport_name: sportname,
-          userId: userId
-      }})
+          userId: userId,
+        },
+      });
       //console.log(getSport.length)
-      if(getSport != null){
-        return ((getSport.length == 0) ? true: false);
-      }
-      else
-      return ((getSport == null) ? true: false);
+      if (getSport != null) {
+        return getSport.length == 0 ? true : false;
+      } else return getSport == null ? true : false;
     }
-    static findSportById(id, userId){
+    static findSportById(id, userId) {
       return this.findByPk(id);
     }
   }
-  sports.init({
-    sport_name: {type: DataTypes.STRING,
-                  unique: true}
-  }, {
-    sequelize,
-    modelName: 'sports',
-  });
+  sports.init(
+    {
+      sport_name: { type: DataTypes.STRING, unique: true },
+    },
+    {
+      sequelize,
+      modelName: "sports",
+    }
+  );
   return sports;
 };
