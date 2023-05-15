@@ -19,6 +19,22 @@ module.exports = (sequelize, DataTypes) => {
     static async getUser(userId) {
       return this.findByPk(userId);
     }
+
+    static async AddsessionIdinuser(sessionId, userId) {
+      const getUser = await this.getUser(userId);
+      //console.log(getUser)
+      getUser.sessionId.push(sessionId);
+      return this.update(
+        {
+          sessionId: getUser.sessionId,
+        },
+        {
+          where: {
+            id: userId,
+          },
+        }
+      );
+    }
   }
   user.init(
     {
@@ -27,6 +43,7 @@ module.exports = (sequelize, DataTypes) => {
       email: DataTypes.STRING,
       password: DataTypes.STRING,
       role: DataTypes.STRING,
+      sessionId: DataTypes.ARRAY(DataTypes.INTEGER),
     },
     {
       sequelize,

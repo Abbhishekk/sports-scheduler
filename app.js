@@ -129,6 +129,7 @@ app.post("/users", async (request, response) => {
       email: request.body.email,
       password: hashPwd,
       role: checkedButton,
+      sessionId: [],
     });
     console.log(User);
     request.login(User, (err) => {
@@ -261,7 +262,7 @@ app.post(
     try {
       console.log(
         request.body,
-        sports.findSportByName(request.body.sport, request.user.id)
+        await sports.findSportByName(request.body.sport, request.user.id)
       );
       var sportName = await sports.findSportByName(
         request.body.sport,
@@ -278,7 +279,7 @@ app.post(
           userId: request.user.id,
         });
         const allSessions = await session.getSessions({
-          sportname: sport.sport_name,
+          sportname: sport.id,
           userId: request.user.id,
         });
         const getUser = await user.getUser(request.user.id);
@@ -308,7 +309,6 @@ app.get(
     //const allSessions = await session.getSessions(sport.sport_name);
     response.render("sportsessions", {
       getUser,
-      user: "admin",
       name: sport.sport_name,
       sportID: sport.id,
       csrfToken: request.csrfToken(),
@@ -316,7 +316,7 @@ app.get(
   }
 );
 app.get(
-  "/sportsession/:id/:user",
+  "/sportsession/:id",
   ConnectEnsureLogin.ensureLoggedIn(),
   async (request, response) => {
     console.log(request.params.id);
@@ -325,14 +325,15 @@ app.get(
       request.user.id
     );
     console.log(sport);
-    const allSessions = await session.getSessions({
-      sportname: sport.sport_name,
+    const allSessions = await session.getAllSessions({
+      sportname: sport.id,
       userId: request.user.id,
     });
+    console.log(allSessions);
     const getUser = await user.getUser(request.user.id);
     response.render("sportsessions", {
       getUser,
-      user: request.params.user,
+
       name: sport.sport_name,
       sportID: sport.id,
       allSessions,
@@ -350,7 +351,7 @@ app.delete(
 
     try {
       const deleteSport = await sports.deleteSport(request.body.id);
-      await session.deleteSession(request.body.name, request.user.id);
+      await session.deleteSession(request.body.id, request.user.id);
       console.log(deleteSport);
       return response.send(deleteSport ? true : false);
     } catch (error) {
@@ -360,25 +361,20 @@ app.delete(
   }
 );
 app.get(
-  "/createsession/:id/:user",
+  "/createsession/:id",
   ConnectEnsureLogin.ensureLoggedIn(),
-  (request, response) => {
-    response.render("createsession", {
-      sportId: request.params.id,
-      user: request.params.user,
-      csrfToken: request.csrfToken(),
-    });
-
+  async (request, response) => {
+    const getUser = await user.getUser(request.user.id);
     if (request.accepts("HTML")) {
       response.render("createsession", {
         sportId: request.params.id,
-        user: request.params.user,
+        getUser,
         csrfToken: request.csrfToken(),
       });
     } else {
       response.json({
         sportId: request.params.id,
-        user: request.params.user,
+        getUser,
       });
     }
   }
@@ -389,10 +385,18 @@ app.post(
   async (request, response) => {
     var playerArray = request.body.playername.split(",");
     const sportname = await sports.findSportById(request.body.sportname);
+    if (playerArray.length > request.body.noPlayer) {
+      request.flash("error", "No. of PLayers Exceeded!");
+      response.redirect(`/createsession/${sportname.id}`);
+    }
+    if (request.body.time <= new Date()) {
+      request.flash("error", "Date should not be less than today date!");
+      response.redirect(`/createsession/${sportname.id}`);
+    }
     try {
       console.log(session);
       await session.addSession({
-        sportname: sportname.sport_name,
+        sportname: sportname.id,
         dateTime: request.body.dateTime,
         address: request.body.address,
         players: playerArray,
@@ -400,9 +404,8 @@ app.post(
         noplayers: request.body.noPlayer,
         sessioncreated: true,
       });
-
+      response.redirect(`/sportsession/${sportname.id}`);
       //const allSessions = await session.getSessions({ sportname: sportname.sport_name, userId: request.user.id});
-      response.redirect(`/sportsession/${sportname.id}/${request.body.user}`);
     } catch (error) {
       console.log(error);
     }
@@ -410,22 +413,23 @@ app.post(
 );
 
 app.get(
-  "/session/:id/:user",
+  "/session/:id",
   ConnectEnsureLogin.ensureLoggedIn(),
   async (request, response) => {
     const getUser = await user.getUser(request.user.id);
     const allSessions = await session.getSessionById(request.params.id);
+    console.log(getUser.sessionId);
     response.render("session", {
       getUser,
       allSessions,
-      user: request.params.user,
+
       csrfToken: request.csrfToken(),
     });
   }
 );
 
 app.get(
-  "/sesson",
+  "/session",
   ConnectEnsureLogin.ensureLoggedIn(),
   async (request, response) => {
     const getUser = await user.getUser(request.user.id);
@@ -470,18 +474,16 @@ app.put(
   "/cancelsession",
   ConnectEnsureLogin.ensureLoggedIn(),
   async (request, response) => {
+    console.log(request.body);
     try {
-      const canceledSession = await session.cancelSession(
-        request.body.id,
-        request.user.id
-      );
-      const sportId = await sports.findAll({
-        where: {
-          sport_name: request.body.sportname,
-        },
-      });
-      console.log(sportId[0].id);
-      response.send({ canceledSession, sportId });
+      const canceledSession = await session.cancelSession(request.user.id);
+      // const sportId = await sports.findAll({
+      //   where: {
+      //     sport_name: request.body.sportname,
+      //   },
+      // });
+      console.log(canceledSession);
+      response.send(canceledSession);
     } catch (error) {
       console.log(error);
     }
@@ -493,7 +495,12 @@ app.put("/addPlayer", async (request, response) => {
       request.body.id,
       request.body.playername
     );
-    console.log(addPlayer);
+    console.log(request.body);
+    const addSessionId = await user.AddsessionIdinuser(
+      request.body.id,
+      request.user.id
+    );
+    console.log(addPlayer, addSessionId);
     response.send(addPlayer);
   } catch (error) {
     console.log(error);

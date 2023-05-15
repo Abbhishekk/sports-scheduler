@@ -12,7 +12,6 @@ module.exports = {
       },
       sport_name: {
         type: Sequelize.STRING,
-        unique: true,
       },
       createdAt: {
         allowNull: false,

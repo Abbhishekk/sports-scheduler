@@ -28,6 +28,9 @@ module.exports = {
       role: {
         type: Sequelize.STRING,
       },
+      sessionId: {
+        type: Sequelize.ARRAY(Sequelize.INTEGER),
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
@@ -40,6 +43,6 @@ module.exports = {
   },
   // eslint-disable-next-line no-unused-vars
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("users");
+    await queryInterface.dropTable("user");
   },
 };

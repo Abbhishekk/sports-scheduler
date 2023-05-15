@@ -10,7 +10,7 @@ module.exports = {
         type: Sequelize.INTEGER,
       },
       sportname: {
-        type: Sequelize.STRING,
+        type: Sequelize.INTEGER,
       },
       time: {
         type: Sequelize.DATE,

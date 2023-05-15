@@ -61,7 +61,7 @@ module.exports = (sequelize, DataTypes) => {
   }
   sports.init(
     {
-      sport_name: { type: DataTypes.STRING, unique: true },
+      sport_name: { type: DataTypes.STRING },
     },
     {
       sequelize,

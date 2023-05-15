@@ -1,5 +1,5 @@
 "use strict";
-const { Model } = require("sequelize");
+const { Model, Op } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class session extends Model {
     /**
@@ -66,6 +66,10 @@ module.exports = (sequelize, DataTypes) => {
           sportname: sportname,
           sessioncreated: true,
           userId,
+          time: {
+            // eslint-disable-next-line no-undef
+            [Op.gt]: new Date(),
+          },
         },
       });
     }
@@ -73,9 +77,10 @@ module.exports = (sequelize, DataTypes) => {
       return this.findAll({
         where: {
           sportname: sportname,
+          sessioncreated: true,
           time: {
             // eslint-disable-next-line no-undef
-            [op.gt]: new Date(),
+            [Op.gt]: new Date(),
           },
         },
       });
@@ -117,7 +122,7 @@ module.exports = (sequelize, DataTypes) => {
   }
   session.init(
     {
-      sportname: DataTypes.STRING,
+      sportname: DataTypes.INTEGER,
       time: DataTypes.DATE,
       address: DataTypes.STRING,
       playername: DataTypes.ARRAY(DataTypes.STRING),

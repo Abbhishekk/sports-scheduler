@@ -19,7 +19,7 @@
                 headers : {"content-type" : 'application/json'},
                 body : JSON.stringify({
                     id: id,
-                    sportname: sportname,
+                    sportId: sportname,
                     user: user,
                     '_csrf' : token
                 })
@@ -29,6 +29,7 @@
             if(res.ok){
                 console.log(res);
                 console.log('session canceled');
+                window.location.assign('/');
             }
             
             })
@@ -74,6 +75,7 @@
 
 <body>
     <%- include('header',{page: 'signout'})%>
+    sessionId: <%= getUser.sessionId %>
     <div class="container mx-auto">
         <h1 class=" text-6xl my-10 m-10"><%= allSessions.sportname %> Session #<%= allSessions.id %></h1>
         <div class="my-10 text-2xl m-10">
@@ -99,17 +101,20 @@
                 <% } %>
             </div>
         </div>
-        <% if(getUser == 'admin' && allSessions.userId == getUser.id){ %>
+        <% if(getUser.role == 'admin' && allSessions.userId == getUser.id){ %>
         <div class="m-10 gap-10">
             <a href="#" class="mx-5">Edit Session</a>
-            <a href="#" onclick="cancelsession(<%= allSessions.id %>,'<%= allSessions.sportname %>','<%= user %>')">Cancel Session</a>
+            <a href="#" onclick="cancelsession(<%= allSessions.id %>,<%= allSessions.sportname %>,'<%= getUser.role %>')">Cancel Session</a>
+            
         </div>
-        <% }
-        else { %>
+        <% } %>
+        <% if(getUser.sessionId != null) { %>
+          <% if(!getUser.sessionId.includes(allSessions.id)) {%>
             <div class="m-10 gap-10 text-2xl">
                 <a href="#" onclick="addplayer('<%= getUser.fname %>', <%= allSessions.id %> )" class="mx-auto">Join Session</a>
                 
             </div>
+        <% } %>
         <% } %>
     </div>
         

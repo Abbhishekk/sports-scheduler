@@ -19,7 +19,7 @@
       headers : {"content-type" : 'application/json'},
       body: JSON.stringify({
         id: id,
-        name: '<%= name %>',
+        name: '<%= getUser.role %>',
         '_csrf': token
       })
     })
@@ -39,16 +39,16 @@
     <div class="container m-auto mt-10 p-auto">
         <div>
             <p class="text-6xl mb-5"><%= name %></p>
-            <% if(user == 'admin') { %>
+            <% if( getUser.role== 'admin') { %>
                 <a href="#" class="text-right my-10 text-lime-950">Edit</a>    
                 <a href="#" onclick="deleteSport(<%= sportID %>)" class="text-right mx-10 text-lime-950">Delete</a>    
             <% } %>
         </div>
-        
+        <p>Sport Admin: <%= getUser.fname %> <%= getUser.lname%> </p>
         <br>
         <p class="text-2xl">Sessions</p>
         <% for(var i=0; i<allSessions.length; i++) { %>
-        <a href="/session/<%= allSessions[i].id %>/<%= user%>">
+        <a href="/session/<%= allSessions[i].id %>">
             <div class="w-auto mt-10 rounded-lg flex text-white px-10 py-4 bg-lime-950 h-16 cursor-pointer overflow-hidden hover:bg-white hover:text-lime-950 border-2 border-lime-950">
                 <%= allSessions[i].time %>
                 <p class="text-right ml-10">
@@ -59,7 +59,7 @@
         <% } %>
     </div>
     <div class="container m-auto mt-10 p-auto text-xl gap-10" >
-        <a href="/createsession/<%= sportID %>/<%= user%>" >Create a new session</a>
+        <a href="/createsession/<%= sportID %>" >Create a new session</a>
         <a href="#" class="px-10">View previous sessions</a>
     </div>
     <%- include('footer')%>
