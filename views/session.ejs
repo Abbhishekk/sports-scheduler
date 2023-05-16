@@ -77,6 +77,9 @@
     <%- include('header',{page: 'signout'})%>
     
     <div class="container mx-auto">
+      <div class="mt-10">
+        <a href="/">Home</a> > <a href="/sportsession/<%= allSessions.sportname %>"><%= sport.sport_name %></a> > <a href="/session/<%= allSessions.sportname %>"><%= sport.sport_name %> session</a>
+      </div>
         <h1 class=" text-6xl my-10 m-10"><%= allSessions.sportname %> Session #<%= allSessions.id %></h1>
         <div class="my-10 text-2xl m-10">
             <p>Date & Time: </p> <p><%= allSessions.time %></p>

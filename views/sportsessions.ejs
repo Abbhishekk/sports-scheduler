@@ -40,6 +40,9 @@
     <%- include('header',{page: "signout"})%>
     <div class="container m-auto mt-10 p-auto">
         <div>
+            <a href="/">Home</a> > <a href="/sportsession/<%= sportID %>"><%= name %></a>
+        </div>
+        <div>
             <p class="text-6xl mb-5"><%= name %></p>
             <% if( getUser.role== 'admin') { %>
                 <a href="#" class="text-right my-10 text-lime-950">Edit</a>    

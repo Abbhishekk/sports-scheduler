@@ -334,7 +334,6 @@ app.get(
     const getUser = await user.getUser(request.user.id);
     response.render("sportsessions", {
       getUser,
-
       name: sport.sport_name,
       sportID: sport.id,
       allSessions,
@@ -366,9 +365,10 @@ app.get(
   ConnectEnsureLogin.ensureLoggedIn(),
   async (request, response) => {
     const getUser = await user.getUser(request.user.id);
+    const sport = await sports.findSportById(request.params.id);
     if (request.accepts("HTML")) {
       response.render("createsession", {
-        sportId: request.params.id,
+        sportId: sport,
         getUser,
         csrfToken: request.csrfToken(),
       });
@@ -421,11 +421,13 @@ app.get(
   async (request, response) => {
     const getUser = await user.getUser(request.user.id);
     const allSessions = await session.getSessionById(request.params.id);
+    const sport = await sports.findSportById(allSessions.sportname);
     //console.log(request);
     //console.log(getUser.sessionId);
     response.render("session", {
       getUser,
       allSessions,
+      sport,
       previous: false,
       csrfToken: request.csrfToken(),
     });

@@ -10,7 +10,10 @@
 </head>
 <body>
     <%- include('header',{page: 'signout'})%>
-    <div>
+    <div class="container m-auto p-auto my-10">
+        <div>
+            <a href="/">Home</a> > <a href="/sportsession/<%= sportId.id %>"><%= sportId.sport_name %></a> > 
+        </div>
         <ul>
             <% if(messages && messages.error && messages.error.length > 0)  { %>
               <% for(var i=0; i<messages.error.length; i++) { %>
@@ -21,7 +24,7 @@
         <form class="container mx-auto my-10" action="/createsession" method="POST">
             <h2 class="text-6xl my-10">Create Session</h2>
             <input type="hidden" name="_csrf" value="<%= csrfToken %>"/>
-            <input type="text" name="sportname" id="sportname" class="hidden" value="<%= sportId %>" hidden>
+            <input type="text" name="sportname" id="sportname" class="hidden" value="<%= sportId.id %>" hidden>
             <input type="text" name="user" id="user" class="hidden" value="<%= getUser.role %>" hidden>
             <div>
                 <p class=" mb-0 text-2xl">Input Date and Time of session</p>
