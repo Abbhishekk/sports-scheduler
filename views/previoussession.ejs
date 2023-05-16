@@ -91,7 +91,7 @@
                         <a href="#"  class="">
                             <%= allSessions.playername[i] %>
                         </a>
-                        <% if(allSessions.userId == getUser.id){ %>
+                        <% if(getUser.role == 'admin' && allSessions.userId == getUser.id){ %>
                         <a href="#" onclick="removeplayer('<%= allSessions.playername[i] %>' , <%= allSessions.id %>);">        
                             <svg xmlns="http://www.w3.org/2000/svg"  fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 ">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -103,23 +103,7 @@
                 <% } %>
             </div>
         </div>
-        
-        <% if(getUser.role == 'admin' && allSessions.userId == getUser.id){ %>
-        <div class="m-10 gap-10">
-            <a href="#" class="mx-5">Edit Session</a>
-            <a href="#" onclick="cancelsession(<%= allSessions.id %>,<%= allSessions.sportname %>,'<%= getUser.role %>')">Cancel Session</a>
-            
-        </div>
-        <% } %>
-        <% if(getUser.sessionId != null) { %>
-          <% if(!getUser.sessionId.includes(allSessions.id) && ( allSessions.noplayers - allSessions.playername.length ) >= 1) {%>
-            <div class="m-10 gap-10 text-2xl">
-                <a href="#" onclick="addplayer('<%= getUser.fname %>', <%= allSessions.id %> )" class="mx-auto">Join Session</a>
-                
-            </div>
-        <% } %>
-        <% } %>
-        
+       
     </div>
         
     <%- include('footer')%>

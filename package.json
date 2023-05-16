@@ -30,7 +30,8 @@
     "connect-flash": "^0.1.1",
     "pg": "^8.10.0",
     "sequelize": "^6.31.0",
-    "sequelize-cli": "^6.6.0"
+    "sequelize-cli": "^6.6.0",
+    "window": "^4.2.7"
   },
   "devDependencies": {
     "bcrypt": "^5.1.0",

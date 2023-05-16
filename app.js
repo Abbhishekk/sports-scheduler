@@ -11,6 +11,7 @@ const expresssession = require("express-session");
 const LocalStrategy = require("passport-local");
 const bcrypt = require("bcrypt");
 const flash = require("connect-flash");
+
 app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
@@ -129,7 +130,7 @@ app.post("/users", async (request, response) => {
       email: request.body.email,
       password: hashPwd,
       role: checkedButton,
-      sessionId: [],
+      sessionId: [0],
     });
     console.log(User);
     request.login(User, (err) => {
@@ -385,29 +386,31 @@ app.post(
   async (request, response) => {
     var playerArray = request.body.playername.split(",");
     const sportname = await sports.findSportById(request.body.sportname);
+    console.log(request.body.dateTime, new Date().toISOString());
     if (playerArray.length > request.body.noPlayer) {
       request.flash("error", "No. of PLayers Exceeded!");
       response.redirect(`/createsession/${sportname.id}`);
     }
-    if (request.body.time <= new Date()) {
+    if (request.body.dateTime < new Date().toISOString()) {
       request.flash("error", "Date should not be less than today date!");
       response.redirect(`/createsession/${sportname.id}`);
-    }
-    try {
-      console.log(session);
-      await session.addSession({
-        sportname: sportname.id,
-        dateTime: request.body.dateTime,
-        address: request.body.address,
-        players: playerArray,
-        userId: request.user.id,
-        noplayers: request.body.noPlayer,
-        sessioncreated: true,
-      });
-      response.redirect(`/sportsession/${sportname.id}`);
-      //const allSessions = await session.getSessions({ sportname: sportname.sport_name, userId: request.user.id});
-    } catch (error) {
-      console.log(error);
+    } else {
+      try {
+        //console.log(session);
+        await session.addSession({
+          sportname: sportname.id,
+          dateTime: request.body.dateTime,
+          address: request.body.address,
+          players: playerArray,
+          userId: request.user.id,
+          noplayers: request.body.noPlayer,
+          sessioncreated: true,
+        });
+        response.redirect(`/sportsession/${sportname.id}`);
+        //const allSessions = await session.getSessions({ sportname: sportname.sport_name, userId: request.user.id});
+      } catch (error) {
+        console.log(error);
+      }
     }
   }
 );
@@ -418,11 +421,12 @@ app.get(
   async (request, response) => {
     const getUser = await user.getUser(request.user.id);
     const allSessions = await session.getSessionById(request.params.id);
-    console.log(getUser.sessionId);
+    //console.log(request);
+    //console.log(getUser.sessionId);
     response.render("session", {
       getUser,
       allSessions,
-
+      previous: false,
       csrfToken: request.csrfToken(),
     });
   }
@@ -438,6 +442,7 @@ app.get(
       response.render("session", {
         getUser,
         allSessions,
+        previous: false,
         user: request.user.role,
         csrfToken: request.csrfToken(),
       });
@@ -462,6 +467,12 @@ app.put(
         request.params.playername,
         request.params.id
       );
+      if (
+        request.user.sessionId.includes(sessions.id) &&
+        request.user.fname == request.params.playername
+      ) {
+        await user.removeSessionId(sessions.id, request.user.id);
+      }
       return response.json(updatedplayer);
     } catch (error) {
       console.log(error);
@@ -495,7 +506,7 @@ app.put("/addPlayer", async (request, response) => {
       request.body.id,
       request.body.playername
     );
-    console.log(request.body);
+    //console.log(request.body);
     const addSessionId = await user.AddsessionIdinuser(
       request.body.id,
       request.user.id
@@ -506,5 +517,37 @@ app.put("/addPlayer", async (request, response) => {
     console.log(error);
   }
 });
+
+app.get(
+  "/previoussessions/:sportId",
+  ConnectEnsureLogin.ensureLoggedIn(),
+  async (request, response) => {
+    const getUser = await user.getUser(request.user.id);
+    const allSessions = await session.getPreviousSessions(
+      request.params.sportId
+    );
+    const getSports = await sports.findSportById(request.params.sportId);
+    response.render("previoussessions", {
+      getUser,
+      allSessions,
+      getSports,
+      name: "cricket",
+      csrfToken: request.csrfToken(),
+    });
+  }
+);
+
+app.get(
+  "/previoussession/:id",
+  ConnectEnsureLogin.ensureLoggedIn(),
+  async (request, response) => {
+    const getUser = await user.getUser(request.user.id);
+    const allSessions = await session.getPreviousSessions(request.params.id);
+    response.render("previoussession", {
+      getUser,
+      allSessions,
+    });
+  }
+);
 
 module.exports = app;

@@ -85,6 +85,18 @@ module.exports = (sequelize, DataTypes) => {
         },
       });
     }
+    static async getPreviousSessions(sportname) {
+      return this.findAll({
+        where: {
+          sportname: sportname,
+          sessioncreated: false,
+          time: {
+            // eslint-disable-next-line no-undef
+            [Op.lt]: new Date(),
+          },
+        },
+      });
+    }
 
     static async cancelSession(id) {
       //console.log(player,sessions.playername)

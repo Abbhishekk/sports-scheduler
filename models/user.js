@@ -35,6 +35,21 @@ module.exports = (sequelize, DataTypes) => {
         }
       );
     }
+
+    static async removeSessionId(sessionId, userId) {
+      const getUser = await this.getUser(userId);
+      getUser.sessionId.pop(sessionId);
+      return this.update(
+        {
+          sessionId: getUser.sessionId,
+        },
+        {
+          where: {
+            id: userId,
+          },
+        }
+      );
+    }
   }
   user.init(
     {
