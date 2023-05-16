@@ -38,7 +38,7 @@ describe("Sports Scheduler Application", function () {
     }
   });
 
-  test("Sign up", async () => {
+  test("Sign up as admin", async () => {
     let res = await agent.get("/signup");
     const csrfToken = extractCsrfToken(res);
     res = await agent.post("/users").send({
@@ -50,6 +50,10 @@ describe("Sports Scheduler Application", function () {
       _csrf: csrfToken,
     });
     expect(res.statusCode).toBe(302);
+  });
+  test("Sign up as player", async () => {
+    let res = await agent.get("/signup");
+    const csrfToken = extractCsrfToken(res);
     res = await agent.post("/users").send({
       firstname: "Test",
       lastname: "User 2",
@@ -75,52 +79,65 @@ describe("Sports Scheduler Application", function () {
     await login(agent, "user.1@test.com", "12345678");
     const res = await agent.get("/createsport");
     const csrfToken = extractCsrfToken(res);
-    const response = await agent.post("/createsport").send({
+    const response1 = await agent.post("/createsport").send({
       sport: "cricket",
       _csrf: csrfToken,
     });
-    expect(response.statusCode).toBe(200);
+    expect(response1.statusCode).toBe(200);
+    const response2 = await agent.post("/createsport").send({
+      sport: "Tennis",
+      _csrf: csrfToken,
+    });
+    expect(response2.statusCode).toBe(200);
+  });
+
+  test("create a session", async () => {
+    const agent = request.agent(server);
+    await login(agent, "user.1@test.com", "12345678");
+    let res = await agent.get("/createsession/1");
+    let csrfToken = extractCsrfToken(res);
+    let today = new Date("2023-10-24");
+
+    console.log("Date: ", today);
+    const createsesion = await agent.post("/createsession").send({
+      sportname: 1,
+      dateTime: today,
+      address: "test",
+      playername: "test,test",
+      noPlayer: 4,
+      sessioncreated: true,
+      // eslint-disable-next-line quote-props
+      _csrf: csrfToken,
+    });
+    console.log(createsesion.text);
+    const groupedsessionResponse = await agent
+      .get("/session")
+      .set("Accept", "application/json");
+    const parsedGroupedResponse = JSON.parse(groupedsessionResponse.text);
+    console.log(parsedGroupedResponse);
+    const sessions = parsedGroupedResponse.allSessions.length;
+
+    expect(sessions).toBe(1);
   });
 
   // test("delete a sport", async () => {
   //   const agent = request.agent(server);
   //   await login(agent, "user.1@test.com", "12345678");
-  //   const res = await agent.get('/admin');
-  //   const res1 = await agent.get('/admin').set("Accept", "application/json");
+  //   const res = await agent.get('/sportsession/1');
+  //   let res1 = await agent.get('/admin').set("Accept", "application/json");
   //   const csrfToken = extractCsrfToken(res);
-  //   console.log(res1.allSports)
-  //   const sportId = await res1.allSports[0].id;
-  //   const response = await agent.delete(`/sportsession/${sportId}`).send({
+  //   console.log('allSports: ',res1);
+  //   const groupedResponse = JSON.parse(res1.text);
+  //   const sportId = groupedResponse.allSports[0].id;
+  //   const response = await agent.delete(`/sportsession`).send({
   //     sport: 'cricket',
-  //     "_csrf" : csrfToken
+  //     id : 1,
+  //     _csrf : csrfToken
   //   });
+  //    res1 = await agent.get('/admin').set("Accept", "application/json");
+  //   console.log('allSports: ',res1.text);
+  //   console.log('response: \n',response);
   //   expect(response.statusCode).toBe(200);
-  // });
-
-  // test("create a session", async () => {
-  //   const agent = request.agent(server);
-  //   await login(agent, "user.1@test.com", "12345678");
-  //   let res = await agent.get("/createsession/1/admin");
-  //   let csrfToken = extractCsrfToken(res);
-  //   await agent.post("/createsession").send({
-  //       sportname:'cricket',
-  //       dateTime: new Date(),
-  //       address: 'test',
-  //       playername: 'test,test',
-  //       noPlayer: 4,
-  //       sessioncreated: true,
-  //     // eslint-disable-next-line quote-props
-  //     _csrf: csrfToken,
-  //   });
-
-  //   const groupedsessionResponse = await agent
-  //     .get("/session")
-  //     .set("Accept", "application/json");
-  //   const parsedGroupedResponse = JSON.parse(groupedsessionResponse.text);
-  //   const sessions = parsedGroupedResponse.id.length;
-
-  //   expect(sessions).toBe(1);
-
   // });
 
   //   test("Deletes a todo with the given ID if it exists and sends a boolean response", async () => {

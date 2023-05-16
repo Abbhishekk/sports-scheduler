@@ -376,6 +376,7 @@ app.get(
       response.json({
         sportId: request.params.id,
         getUser,
+        csrfToken: request.csrfToken(),
       });
     }
   }
@@ -439,7 +440,7 @@ app.get(
   ConnectEnsureLogin.ensureLoggedIn(),
   async (request, response) => {
     const getUser = await user.getUser(request.user.id);
-    const allSessions = await session.getSessionById(request.user.id);
+    const allSessions = await session.getAllSessionsTest({ sportname: 1 });
     if (request.accepts("HTML")) {
       response.render("session", {
         getUser,

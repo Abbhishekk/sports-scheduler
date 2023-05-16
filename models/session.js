@@ -85,6 +85,16 @@ module.exports = (sequelize, DataTypes) => {
         },
       });
     }
+
+    static getAllSessionsTest({ sportname }) {
+      return this.findAll({
+        where: {
+          sportname: sportname,
+          sessioncreated: true,
+        },
+      });
+    }
+
     static async getPreviousSessions(sportname) {
       return this.findAll({
         where: {
