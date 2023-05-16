@@ -58,6 +58,13 @@ module.exports = (sequelize, DataTypes) => {
     static findSportById(id, userId) {
       return this.findByPk(id);
     }
+    static getSportByUserId(userId) {
+      return this.findAll({
+        where: {
+          userId: userId,
+        },
+      });
+    }
   }
   sports.init(
     {

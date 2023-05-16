@@ -53,6 +53,18 @@
                 <label for="password">Password: </label>
                 <input type="password" name="password" placeholder="Password" class="border border-gray-300 rounded text-gray-900 w-full p-2 text-sm leading-4" required />
               </div>
+              <% if(failure){%>
+              
+                <p>Email Already registered <a href="/login" class="text-green-600">Sign-in</a></p>
+              
+              <% } %>
+              <ul>
+                <% if(messages && messages.error && messages.error.length > 0)  { %>
+                  <% for(var i=0; i<messages.error.length; i++) { %>
+                          <li class="text-red-600"> <%= messages.error[i] %></li>
+                  <% } %>
+                <% } %>
+              </ul>
             <div class="flex pt-2">
                 <p>Already a user?</p><a href="/login" class="text-blue-600 underline">Login</a>
             </div>  

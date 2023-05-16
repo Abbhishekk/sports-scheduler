@@ -125,6 +125,18 @@ module.exports = (sequelize, DataTypes) => {
       return this.findByPk(id);
     }
 
+    static getPlayedSessions(userId) {
+      return this.findAll({
+        where: {
+          userId: userId,
+          sessioncreated: true,
+          dateTime: {
+            [Op.lt]: new Date(),
+          },
+        },
+      });
+    }
+
     static async removePlayer(playername, id) {
       const sessions = await session.findByPk(id);
       var index = sessions.playername.indexOf(playername);

@@ -99,6 +99,7 @@ app.get("/", (request, response) => {
     }
   } else {
     response.render("index", {
+      failure: false,
       csrfToken: request.csrfToken(),
     });
   }
@@ -201,6 +202,7 @@ app.post(
 
 app.get("/signup", (request, response) => {
   response.render("signup", {
+    failure: false,
     csrfToken: request.csrfToken(),
   });
 });
@@ -552,5 +554,11 @@ app.get(
     });
   }
 );
+
+// app.get('/report',ConnectEnsureLogin.ensureLoggedIn(),async (request, response) => {
+//     const getSport = await sports.getSportUserId(request.user.id);
+//     const getReport = await session.getPlayedSessions(request.user.id);
+
+// });
 
 module.exports = app;
