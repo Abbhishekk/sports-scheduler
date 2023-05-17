@@ -390,15 +390,15 @@ app.post(
     var playerArray = request.body.playername.split(",");
     const sportname = await sports.findSportById(request.body.sportname);
     console.log(request.body.dateTime, new Date().toISOString());
-    if (playerArray.length > request.body.noPlayer) {
-      request.flash("error", "No. of PLayers Exceeded!");
-      response.redirect(`/createsession/${sportname.id}`);
-    }
-    if (request.body.dateTime < new Date().toISOString()) {
-      request.flash("error", "Date should not be less than today date!");
-      response.redirect(`/createsession/${sportname.id}`);
-    } else {
-      try {
+    try {
+      if (playerArray.length > request.body.noPlayer) {
+        request.flash("error", "No. of PLayers Exceeded!");
+        response.redirect(`/createsession/${sportname.id}`);
+      }
+      if (request.body.dateTime < new Date().toISOString()) {
+        request.flash("error", "Date should not be less than today date!");
+        response.redirect(`/createsession/${sportname.id}`);
+      } else if (!(playerArray.length > request.body.noPlayer)) {
         //console.log(session);
         await session.addSession({
           sportname: sportname.id,
@@ -411,9 +411,9 @@ app.post(
         });
         response.redirect(`/sportsession/${sportname.id}`);
         //const allSessions = await session.getSessions({ sportname: sportname.sport_name, userId: request.user.id});
-      } catch (error) {
-        console.log(error);
       }
+    } catch (error) {
+      console.log(error);
     }
   }
 );
