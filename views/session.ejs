@@ -107,7 +107,7 @@
             </div>
         </div>
         
-        <% if(getUser.role == 'admin' && allSessions.userId == getUser.id){ %>
+        <% if( allSessions.userId == getUser.id){ %>
         <div class="m-10 gap-10">
             <a href="#" class="mx-5">Edit Session</a>
             <a href="#" onclick="cancelsession(<%= allSessions.id %>,<%= allSessions.sportname %>,'<%= getUser.role %>')">Cancel Session</a>
